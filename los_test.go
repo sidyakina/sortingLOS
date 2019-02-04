@@ -63,6 +63,14 @@ func TestLOS_Sort2(t *testing.T) {
 	}
 }
 
+func TestLOS_Sort3(t *testing.T) {
+	for _, pair := range testsSort {
+		los := NewLOS(pair.maxNumber)
+		los.Sort3()
+		assert.Equal(t, newTestLOS(pair.elements), los, pair.name)
+	}
+}
+
 type testpairs2 struct {
 	maxNumber int
 	stringLOS string
