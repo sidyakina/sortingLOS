@@ -37,29 +37,29 @@ func NewLOS(maxNumber int) *LOS {
 	return los
 }
 
-func (los *LOS) getLasts() (*LOS, *LOS) {
-	if los.next == nil {
-		// элемент и так последний
-		return los, nil
+func (los *LOS) getLasts() (penultimate, last *LOS) {
+	penultimate = los
+	last = penultimate.next
+	if last == nil {
+		// переданный элемент и так последний
+		return
 	}
-	ptr0 := los
-	ptr1 := los.next
-	for ptr1.next != nil {
-		ptr0 = ptr1
-		ptr1 = ptr0.next
+	for last.next != nil {
+		penultimate = last
+		last = penultimate.next
 	}
-	//fmt.Printf("/n %v %v", ptr0.number, ptr1.number)
-	return ptr0, ptr1
+	//fmt.Printf("/n %v %v", penultimate.number, last.number)
+	return
 }
 
 func (los *LOS) getLength() int {
-	l := 0
+	length := 0
 	ptr := los
 	for ptr != nil {
-		l++
+		length++
 		ptr = ptr.next
 	}
-	return l
+	return length
 }
 
 func (los *LOS) cutSecondPart(length int) *LOS {
@@ -92,15 +92,16 @@ func (los *LOS) swap1() {
 		// нет следующего элемента, может быть если список состоит из одного элемента
 		return
 	}
-	ptr0, ptr1 := oldNext.getLasts()
-	if ptr1 == nil {
+	penultimate, last := oldNext.getLasts()
+	if last == nil {
 		// мы в конце списка, все отсортировано
 		return
 	}
-	// ставим следующим после текущего последний и делаем последним предыдущий последний
-	ptr.next = ptr1
-	ptr0.next = nil
-	ptr1.next = oldNext
+	// ставим последний элемент между текущим и старым следующим
+	// после этого предпоследний становится последним элементом
+	ptr.next = last
+	penultimate.next = nil
+	last.next = oldNext
 	oldNext.swap1()
 }
 
@@ -118,17 +119,17 @@ func (los *LOS) swap2(length int) {
 		return
 	}
 	for {
-		old := changeList.next
-		newLast, last := insertList.getLasts()
+		oldNext := changeList.next
+		penultimate, last := insertList.getLasts()
 		if last == nil {
-			changeList.next = newLast
-			newLast.next = old
+			changeList.next = penultimate
+			penultimate.next = oldNext
 			return
 		}
 		changeList.next = last
-		newLast.next = nil
-		last.next = old
-		changeList = old
+		penultimate.next = nil
+		last.next = oldNext
+		changeList = oldNext
 	}
 }
 
@@ -147,25 +148,25 @@ func (los *LOS) swap3(length int) {
 	}
 	tInsertList := transformLOS(*insertList)
 	for {
-		old := changeList.next
+		oldNext := changeList.next
 		if tInsertList.next == nil {
 			changeList.next = tInsertList.element
-			tInsertList.element.next = old
+			tInsertList.element.next = oldNext
 			return
 		}
 		changeList.next = tInsertList.element
-		tInsertList.element.next = old
+		tInsertList.element.next = oldNext
 		tInsertList = tInsertList.next
-		changeList = old
+		changeList = oldNext
 	}
 }
 
 type transformedLOS struct {
 	element *LOS
-	next *transformedLOS
+	next    *transformedLOS
 }
 
-func transformLOS(los LOS) *transformedLOS{
+func transformLOS(los LOS) *transformedLOS {
 	ptrT := &transformedLOS{&los, nil}
 	ptrL := &los
 	for ptrL.next != nil {

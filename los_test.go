@@ -107,7 +107,7 @@ func TestLOS_String(t *testing.T) {
 		{5, "1, 2, 3, 4, 5"},
 	}
 	for _, pair := range tests {
-		t.Run("print: " + pair.stringLOS, func(t *testing.T) {
+		t.Run("print: "+pair.stringLOS, func(t *testing.T) {
 			los := NewLOS(pair.maxNumber)
 			assert.Equal(t, pair.stringLOS, (*los).String())
 		})
