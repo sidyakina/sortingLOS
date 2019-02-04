@@ -52,7 +52,7 @@ func (los *LOS) getLasts() (*LOS, *LOS) {
 	return ptr0, ptr1
 }
 
-func (los *LOS) getLenght() int {
+func (los *LOS) getLength() int {
 	l := 0
 	ptr := los
 	for ptr != nil {
@@ -62,16 +62,15 @@ func (los *LOS) getLenght() int {
 	return l
 }
 
-func (los *LOS) cutSecondPart() *LOS {
+func (los *LOS) cutSecondPart(length int) *LOS {
 	ptr := los
-	l := los.getLenght()
-	if l == 1 {
+	if length == 1 {
 		return nil
 	}
-	if l%2 == 1 {
-		l += 1
+	if length%2 == 1 {
+		length += 1
 	}
-	separator := int(float32(l) / 2)
+	separator := int(float32(length) / 2)
 	for i := 1; i < separator; i++ {
 		ptr = ptr.next
 	}
@@ -83,10 +82,10 @@ func (los *LOS) cutSecondPart() *LOS {
 //----------------------------------------------------
 
 func (los *LOS) Sort1() {
-	los.swap()
+	los.swap1()
 }
 
-func (los *LOS) swap() {
+func (los *LOS) swap1() {
 	ptr := los          // текущий указатель на изменяемый элемент
 	oldNext := ptr.next // старый следующий элемент изменяемого элемента
 	if oldNext == nil {
@@ -102,14 +101,19 @@ func (los *LOS) swap() {
 	ptr.next = ptr1
 	ptr0.next = nil
 	ptr1.next = oldNext
-	oldNext.swap()
+	oldNext.swap1()
 }
 
 //----------------------------------------------------
 
 func (los *LOS) Sort2() {
+	length := los.getLength()
+	los.swap2(length)
+}
+
+func (los *LOS) swap2(length int) {
 	changeList := los
-	insertList := changeList.cutSecondPart()
+	insertList := changeList.cutSecondPart(length)
 	if insertList == nil {
 		return
 	}
@@ -131,8 +135,13 @@ func (los *LOS) Sort2() {
 //----------------------------------------------------
 
 func (los *LOS) Sort3() {
+	length := los.getLength()
+	los.swap3(length)
+}
+
+func (los *LOS) swap3(length int) {
 	changeList := los
-	insertList := changeList.cutSecondPart()
+	insertList := changeList.cutSecondPart(length)
 	if insertList == nil {
 		return
 	}
@@ -164,4 +173,15 @@ func transformLOS(los LOS) *transformedLOS{
 		ptrT = &transformedLOS{ptrL, ptrT}
 	}
 	return ptrT
+}
+
+//----------------------------------------------------
+
+func (los *LOS) Sort4() {
+	length := los.getLength()
+	if length < 101 {
+		los.swap2(length)
+	} else {
+		los.swap3(length)
+	}
 }
