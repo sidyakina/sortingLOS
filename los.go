@@ -21,29 +21,34 @@ func (los LOS) String() string {
 	}
 }
 
-func newLOS(number int) *LOS {
+func newElement(number int) *LOS {
 	return &LOS{number: number}
 }
 
-func NewList(maxNumber int) *LOS {
-	los := newLOS(1)
+func NewLOS(maxNumber int) *LOS {
+	if maxNumber < 1 {
+		return nil
+	}
+	los := newElement(1)
 	ptr := los
-	for i := 2; i < maxNumber + 1; i++ {
-		ptr.next = newLOS(i)
+	for i := 2; i < maxNumber+1; i++ {
+		ptr.next = newElement(i)
 		ptr = ptr.next
 	}
 	return los
 }
 
-
 func (los *LOS) Sort() {
 	los.swap()
 }
 
-
 func (los *LOS) swap() {
-	ptr := los             // текущий указатель на изменяемый элемент
+	ptr := los          // текущий указатель на изменяемый элемент
 	oldNext := ptr.next // старый следующий элемент изменяемого элемента
+	if oldNext == nil {
+		// нет следующего элемента, может быть если список состоит из одного элемента
+		return
+	}
 	ptr0, ptr1 := getLasts(oldNext)
 	if ptr1 == nil {
 		// мы в конце списка, все отсортировано
