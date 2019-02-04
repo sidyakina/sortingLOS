@@ -55,6 +55,15 @@ func TestLOS_Sort1(t *testing.T) {
 	}
 }
 
+func BenchmarkLOS_Sort1(b *testing.B) {
+	b.ReportAllocs()
+	los := NewLOS(100)
+	b.ResetTimer()
+	for i := 0; i < b.N; i++ {
+		los.Sort1()
+	}
+}
+
 func TestLOS_Sort2(t *testing.T) {
 	for _, pair := range testsSort {
 		los := NewLOS(pair.maxNumber)
@@ -63,11 +72,29 @@ func TestLOS_Sort2(t *testing.T) {
 	}
 }
 
+func BenchmarkLOS_Sort2(b *testing.B) {
+	b.ReportAllocs()
+	los := NewLOS(100)
+	b.ResetTimer()
+	for i := 0; i < b.N; i++ {
+		los.Sort2()
+	}
+}
+
 func TestLOS_Sort3(t *testing.T) {
 	for _, pair := range testsSort {
 		los := NewLOS(pair.maxNumber)
 		los.Sort3()
 		assert.Equal(t, newTestLOS(pair.elements), los, pair.name)
+	}
+}
+
+func BenchmarkLOS_Sort3(b *testing.B) {
+	b.ReportAllocs()
+	los := NewLOS(100)
+	b.ResetTimer()
+	for i := 0; i < b.N; i++ {
+		los.Sort3()
 	}
 }
 
