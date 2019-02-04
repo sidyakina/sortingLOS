@@ -37,18 +37,28 @@ func TestNewLOS(t *testing.T) {
 	}
 }
 
-func TestLOS_Sort(t *testing.T) {
-	var tests = []testpairs{
-		{1, []int{1}, "only one element: no sort"},
-		{2, []int{1, 2}, "two elements: no sort"},
-		{3, []int{1, 3, 2}, "three elements: one swap"},
-		{4, []int{1, 4, 2, 3}, "four elements: one swap"},
-		{5, []int{1, 5, 2, 4, 3}, "usually sort"},
-		{8, []int{1, 8, 2, 7, 3, 6, 4, 5}, "from readme"},
-	}
-	for _, pair := range tests {
+var testsSort = []testpairs{
+	{1, []int{1}, "only one element: no sort"},
+	{2, []int{1, 2}, "two elements: no sort"},
+	{3, []int{1, 3, 2}, "three elements: one swap"},
+	{4, []int{1, 4, 2, 3}, "four elements: one swap"},
+	{5, []int{1, 5, 2, 4, 3}, "usually sort"},
+	{8, []int{1, 8, 2, 7, 3, 6, 4, 5}, "from readme"},
+	{9, []int{1, 9, 2, 8, 3, 7, 4, 6, 5}, "long list"},
+}
+
+func TestLOS_Sort1(t *testing.T) {
+	for _, pair := range testsSort {
 		los := NewLOS(pair.maxNumber)
-		los.Sort()
+		los.Sort1()
+		assert.Equal(t, newTestLOS(pair.elements), los, pair.name)
+	}
+}
+
+func TestLOS_Sort2(t *testing.T) {
+	for _, pair := range testsSort {
+		los := NewLOS(pair.maxNumber)
+		los.Sort2()
 		assert.Equal(t, newTestLOS(pair.elements), los, pair.name)
 	}
 }

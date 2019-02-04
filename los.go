@@ -11,12 +11,11 @@ func (los LOS) String() string {
 	result := fmt.Sprintf("%v", los.number)
 	ptr := los
 	for {
-		if ptr.next != nil {
-			ptr = *(ptr.next)
-			result = result + fmt.Sprintf(", %v", ptr.number)
-		} else {
+		if ptr.next == nil {
 			return result
 		}
+		ptr = *(ptr.next)
+		result = result + fmt.Sprintf(", %v", ptr.number)
 
 	}
 }
@@ -38,7 +37,9 @@ func NewLOS(maxNumber int) *LOS {
 	return los
 }
 
-func (los *LOS) Sort() {
+//----------------------------------------------------
+
+func (los *LOS) Sort1() {
 	los.swap()
 }
 
@@ -49,7 +50,7 @@ func (los *LOS) swap() {
 		// нет следующего элемента, может быть если список состоит из одного элемента
 		return
 	}
-	ptr0, ptr1 := getLasts(oldNext)
+	ptr0, ptr1 := oldNext.getLasts()
 	if ptr1 == nil {
 		// мы в конце списка, все отсортировано
 		return
@@ -61,7 +62,7 @@ func (los *LOS) swap() {
 	oldNext.swap()
 }
 
-func getLasts(los *LOS) (*LOS, *LOS) {
+func (los *LOS)getLasts() (*LOS, *LOS) {
 	if los.next == nil {
 		// элемент и так последний
 		return los, nil
@@ -74,4 +75,56 @@ func getLasts(los *LOS) (*LOS, *LOS) {
 	}
 	//fmt.Printf("/n %v %v", ptr0.number, ptr1.number)
 	return ptr0, ptr1
+}
+
+//----------------------------------------------------
+
+func (los *LOS) Sort2() {
+	changeList := los
+	insertList := changeList.cutSecondPart()
+	if insertList == nil {
+		return
+	}
+	for {
+		old := changeList.next
+		newLast, last := insertList.getLasts()
+		if last == nil {
+			changeList.next = newLast
+			newLast.next = old
+			return
+		}
+		changeList.next = last
+		newLast.next = nil
+		last.next = old
+		changeList = old
+	}
+
+}
+
+func (los *LOS) getLenght() int {
+	l := 0
+	ptr := los
+	for ptr != nil {
+		l++
+		ptr = ptr.next
+	}
+	return l
+}
+
+func (los *LOS)cutSecondPart() *LOS {
+	ptr := los
+	l := los.getLenght()
+	if l == 1 {
+		return nil
+	}
+	if l % 2 == 1 {
+		l += 1
+	}
+	separator := int(float32(l)/2)
+	for i := 1; i < separator; i++ {
+		ptr = ptr.next
+	}
+	newPtr := ptr.next
+	ptr.next = nil
+	return newPtr
 }
